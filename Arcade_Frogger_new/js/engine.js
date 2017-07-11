@@ -166,6 +166,8 @@ var Engine = (function(global) {
 
         player.render();
         player.levelHandle();
+        gem.render();
+        //renderGem();
     }
 
     /* This function does nothing but it could have been a good place to

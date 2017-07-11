@@ -1,5 +1,5 @@
 /*TODO: Some Global Variables like winner flag,lost flag,level*/
-var score = 22;
+var score = 0;
 var lostGame = 3;
 var level = 1;
 var speed = Math.floor(Math.random() * 101) + 40;
@@ -185,7 +185,10 @@ Player.prototype.reset = function() {
     }
 };
 
-var Gem = function(level) {
+var Gem = function() {
+    this.lastTime = Date.now();
+};
+Gem.prototype.render = function() {
     switch (level) {
         case 1:
             this.sprite = 'images/Green.png';
@@ -197,12 +200,33 @@ var Gem = function(level) {
             this.sprite = 'images/Blue.png';
             break;
     }
-    //this.render();
+    var now = Date.now();
+    if (now - this.lastTime > 10000) {
+    this.x = Math.floor(Math.random() * 101) + 101;
+    this.y = Math.floor(Math.random() * 83) + 83;
+    this.lastTime = now;
+    }
+    ctx.drawImage(Resources.get(this.sprite),this.x,this.y);
+    this.grabGem();
 };
-Gem.prototype.render = function() {
-    var x = Math.floor(Math.random() * 101) + 105;//290;//
-    var y = Math.floor(Math.random() * 101) + 50;//300;//
-    ctx.drawImage(Resources.get(this.sprite),x,y);
+
+Gem.prototype.grabGem = function() {
+        if (player.x < this.x + 50 && player.x + 50 > this.x &&
+            player.y < this.y + 50 && player.y + 50 > this.y) {
+            this.gemReset();
+        }
+};
+Gem.prototype.gemReset = function() {
+
+    this.x=900;
+    this.y=900;
+    console.log("Grabbed!");
+    score+=10;
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, 420, 150);
+    ctx.font = "bold 20px impact";
+    ctx.fillStyle = "black";
+    ctx.fillText("Bonus Points!!", 90, 18);
 };
 
 /*TODO:Object instantiate with some variables*/
@@ -218,7 +242,7 @@ for (var i = 0; i < noEnemies; i++) {
     allEnemies.push(enemy);
 }
 var player = new Player(290, 300);
-var gem = new Gem(level);
+var gem = new Gem();
 
 /*TODO:User input event handler*/
 
